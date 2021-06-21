@@ -38,4 +38,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: echo Pull Request $GITHUB_EVENT_NAME
+        run: echo Pull Request $GITHUB_EVENT_NAME - $GITHUB_ACTION
