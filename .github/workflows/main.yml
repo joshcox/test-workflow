@@ -24,8 +24,8 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: echo Pull Request Closed!
-        
+        run: echo Pull Request Closed!!
+
   build:
     if: ${{github.event.pull_request.action != 'closed'}}
     # The type of runner that the job will run on
