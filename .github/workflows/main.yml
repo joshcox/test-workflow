@@ -1,4 +1,18 @@
 name: CI
+
+# How to create a clean gh-pages branch
+# git symbolic-ref HEAD refs/heads/gh-pages
+# rm .git/index
+# git clean -fdx
+# echo "My Site Name" > index.html
+# mkdir -p ./storybook/pull_requests
+# echo "Storybooks on Pull Requests" > ./storybook/pull_requests/index.html
+# mkdir -p ./storybook/main
+# echo "Storybooks on Main" > ./storybook/main/index.html
+# git add .
+# git commit -a -m "Set up gh-pages from scratch for Storybook Deployment"
+# git push origin gh-pages
+
 on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
@@ -14,6 +28,9 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          
       - name: Delete the branch directory
         run: |
           echo A pull request just closed. Time to clean up the storybook deployment.
@@ -31,6 +48,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Read .nvmrc
         run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
