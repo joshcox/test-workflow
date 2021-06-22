@@ -21,7 +21,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  delete: 
+  remove-pr-storybook: 
     if: ${{github.event.pull_request.action == 'closed'}}
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -41,7 +41,7 @@ jobs:
         env:
           PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
 
-  build:
+  deploy-pr-storybook:
     if: ${{github.event.pull_request.action != 'closed'}}
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -66,12 +66,12 @@ jobs:
         run: |
           npm install
           mkdir ./dist
-          npm run build-storybook -- -o ./dist/${GITHUB_SHA}
+          npm run build-storybook -- -o ./dist
 
       - name: Deploy with gh-pages
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          npx gh-pages -a -b gh-pages -e storybook/pull_requests/${PULL_REQUEST_NUMBER} -d ./dist -u "Bot <bot@bot.bot>"
+          npx gh-pages -b gh-pages -e storybook/pull_requests/${PULL_REQUEST_NUMBER} -d ./dist -u "Bot <bot@bot.bot>"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
