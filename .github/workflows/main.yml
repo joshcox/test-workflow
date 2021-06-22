@@ -35,9 +35,11 @@ jobs:
         run: |
           echo A pull request just closed. Time to clean up the storybook deployment.
           git switch gh-pages
-          git rm -rf ./storybook/pull_request/${GITHUB_REF##*/}
-          git commit -m "Remove pull_request/${GITHUB_REF##*/} storybook deployment."
+          git rm -rf ./storybook/pull_request/${PULL_REQUEST_NUMBER}_*
+          git commit -m "Removes pull_request/${PULL_REQUEST_NUMBER} storybook deployments"
           git push origin gh-pages
+        env:
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
 
   build:
     if: ${{github.event.pull_request.action != 'closed'}}
@@ -68,6 +70,7 @@ jobs:
       - name: Deploy with gh-pages
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          npx gh-pages -b gh-pages -d storybook/pull_request/${GITHUB_REF##*/}${GITHUB_SHA}/ ./storybook-static
+          npx gh-pages -b gh-pages -d storybook/pull_request/${PULL_REQUEST_NUMBER}_${GITHUB_SHA}/ ./storybook-static
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
