@@ -15,40 +15,13 @@ name: CI
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, closed]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-jobs:
-  remove-pr-storybook: 
-    if: ${{github.event.pull_request.action == 'closed'}}
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - name: Delete the pull request directory
-        run: |
-          echo A pull request just closed. Time to clean up the storybook deployment.
-          git switch gh-pages
-          git rm -rf ./storybook/pull_requests/${PULL_REQUEST_NUMBER}
-          git commit -m "Removes pull_requests/${PULL_REQUEST_NUMBER} storybook deployments"
-          git push origin gh-pages
-        env:
-          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
-
-  deploy-pr-storybook:
-    if: ${{github.event.pull_request.action != 'closed'}}
-    # The type of runner that the job will run on
+  deploy-pull-request:
+    if: ${{github.event_name == 'pull_request'}}
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
