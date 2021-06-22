@@ -9,12 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: gh-pages
 
       - name: Delete the pull request directory
         run: |
           echo A pull request just closed. Time to clean up the storybook deployment.
-          git switch gh-pages
           git rm -rf ./storybook/pull_requests/${PULL_REQUEST_NUMBER}
           git commit -m "Removes pull_requests/${PULL_REQUEST_NUMBER} storybook deployments"
           git push origin gh-pages
