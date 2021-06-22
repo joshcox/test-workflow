@@ -1,0 +1,48 @@
+name: Deploy Storybook
+
+# How to create a clean gh-pages branch
+# git symbolic-ref HEAD refs/heads/gh-pages
+# rm .git/index
+# git clean -fdx
+# echo "My Site Name" > index.html
+# mkdir -p ./storybook/pull_requests
+# echo "Storybooks on Pull Requests" > ./storybook/pull_requests/index.html
+# mkdir -p ./storybook/main
+# echo "Storybooks on Main" > ./storybook/main/index.html
+# git add .
+# git commit -a -m "Set up gh-pages from scratch for Storybook Deployment"
+# git push origin gh-pages
+
+on: pull_request
+
+jobs:
+  deploy_pull_request:
+    if: ${{github.event_name == 'pull_request'}}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Read .nvmrc
+        run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
+        id: nvm
+
+      - name: Use Node.js (.nvmrc)
+        uses: actions/setup-node@v1
+        with:
+          node-version: "${{ steps.nvm.outputs.NVMRC }}"
+
+      - name: Dependencies and Build
+        run: |
+          npm install
+          npm run build-storybook -- -o ./dist
+
+      - name: Deploy with gh-pages
+        run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          npx gh-pages -b gh-pages -e storybook/pull_requests/${PULL_REQUEST_NUMBER} -d ./dist -u "Storybook Deployer <bot@bot.bot>"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
