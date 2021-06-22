@@ -65,7 +65,6 @@ jobs:
       - name: Dependencies and Build
         run: |
           npm install
-          mkdir ./dist
           npm run build-storybook -- -o ./dist
 
       - name: Deploy with gh-pages
