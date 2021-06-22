@@ -72,7 +72,7 @@ jobs:
       - name: Deploy with gh-pages
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          npx gh-pages -b gh-pages -d storybook/pull_requests ./${PULL_REQUEST_NUMBER}_${GITHUB_SHA}
+          npx gh-pages -n -b gh-pages -e storybook/pull_requests ./${PULL_REQUEST_NUMBER}_${GITHUB_SHA}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
