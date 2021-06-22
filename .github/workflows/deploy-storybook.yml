@@ -13,9 +13,9 @@ name: Deploy Storybook
 # git commit -a -m "Set up gh-pages from scratch for Storybook Deployment"
 # git push origin gh-pages
 
-on:
-  pull_request:
+on: pull_request
 
+jobs:
   deploy_pull_request:
     if: ${{github.event_name == 'pull_request'}}
     runs-on: ubuntu-latest
