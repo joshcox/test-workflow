@@ -13,7 +13,8 @@ jobs:
 
       - name: Delete the pull request directory
         run: |
-          echo A pull request just closed. Time to clean up the storybook deployment.
+          git config --global user.email "bot@bot.bot"
+          git config --global user.name "Storybook Deployer"
           git rm -rf ./storybook/pull_requests/${PULL_REQUEST_NUMBER}
           git commit -m "Removes pull_requests/${PULL_REQUEST_NUMBER} storybook deployments"
           git push origin gh-pages
