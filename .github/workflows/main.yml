@@ -65,12 +65,14 @@ jobs:
       - name: Dependencies and Build
         run: |
           npm install
-          npm run build-storybook
+          npm run build-storybook -- -o ./${PULL_REQUEST_NUMBER}_${GITHUB_SHA}
+        env:
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
 
       - name: Deploy with gh-pages
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          npx gh-pages -b gh-pages -d storybook/pull_request/${PULL_REQUEST_NUMBER}_${GITHUB_SHA}/ ./storybook-static
+          npx gh-pages -b gh-pages -d storybook/pull_request ./${PULL_REQUEST_NUMBER}_${GITHUB_SHA}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
