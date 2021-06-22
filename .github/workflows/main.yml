@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          
+
       - name: Delete the branch directory
         run: |
           echo A pull request just closed. Time to clean up the storybook deployment.
@@ -68,6 +68,6 @@ jobs:
       - name: Deploy with gh-pages
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          npx gh-pages -b gh-pages -d storybook/pull_request/${GITHUB_REF##*/${GITHUB_SHA}/} /storybook-static
+          npx gh-pages -b gh-pages -d storybook/pull_request/${GITHUB_REF##*/${GITHUB_SHA}/} ./storybook-static
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
