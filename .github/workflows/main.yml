@@ -1,18 +1,11 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
-  # ${{github.sha}}
-
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   pull_request:
     types: [opened, synchronize, reopened, closed]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   delete: 
     if: ${{github.event.pull_request.action == 'closed'}}
@@ -21,10 +14,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Pull Request Closed!!
+      - name: Delete the branch directory
+        run: |
+          echo A pull request just closed. Time to clean up the storybook deployment.
+          git switch gh-pages
+          git rm -rf ./storybook/pull_request/${GITHUB_REF##*/}
+          git commit -m "Remove pull_request/${GITHUB_REF##*/} storybook deployment."
+          git push origin gh-pages
 
   build:
     if: ${{github.event.pull_request.action != 'closed'}}
@@ -39,3 +35,10 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: cat $GITHUB_EVENT_PATH
+
+      - name: Deploy with gh-pages
+        run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          npx gh-pages -b gh-pages -d storybook/pull_request/${GITHUB_REF##*/${GITHUB_SHA}/} /storybook-static
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
