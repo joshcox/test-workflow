@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  remove-pull-request: 
+  remove_pull_request: 
     if: ${{github.event.pull_request.action == 'closed'}}
     runs-on: ubuntu-latest
     steps:

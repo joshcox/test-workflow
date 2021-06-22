@@ -16,7 +16,7 @@ name: Deploy Storybook
 on:
   pull_request:
 
-  deploy-pull-request:
+  deploy_pull_request:
     if: ${{github.event_name == 'pull_request'}}
     runs-on: ubuntu-latest
 
